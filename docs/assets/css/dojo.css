@@ -1,15 +1,18 @@
 /**
- * DataDojo Stylesheet
- * Martial arts aesthetic: warm off-white, ink-black, high contrast, mobile first.
+ * DataDojo — Premium Dojo UI
+ * Martial arts aesthetic × modern web magic.
+ * No new features — pure visual and motion upgrade.
  */
 
+/* ─── Design Tokens ───────────────────────────────────────────────── */
 :root {
   --dojo-bg: #faf8f5;
   --dojo-ink: #18181b;
   --dojo-surface: #ffffff;
   --dojo-border: #e4e4e7;
   --dojo-muted: #71717a;
-  --dojo-accent: #dc2626; /* Crimson headband */
+  --dojo-accent: #dc2626;
+  --dojo-accent-glow: rgba(220, 38, 38, 0.3);
   --dojo-success: #166534;
   --dojo-success-bg: #f0fdf4;
   --dojo-warn: #854d0e;
@@ -17,66 +20,135 @@
   --dojo-error: #991b1b;
   --dojo-error-bg: #fef2f2;
 
+  /* Editor */
+  --dojo-editor-bg: #0f1117;
+  --dojo-editor-gutter: #1e2030;
+  --dojo-editor-fg: #e2e8f0;
+  --dojo-editor-cursor: #dc2626;
+  --dojo-editor-selection: rgba(220, 38, 38, 0.2);
+  --dojo-editor-line-highlight: rgba(255, 255, 255, 0.03);
+
   /* Belts */
-  --belt-white: #f3f4f6;
-  --belt-yellow: #fde047;
-  --belt-orange: #fb923c;
-  --belt-green: #4ade80;
-  --belt-blue: #60a5fa;
-  --belt-purple: #c084fc;
-  --belt-brown: #a8715a;
-  --belt-black: #18181b;
+  --belt-white-color: #f3f4f6;
+  --belt-yellow-color: #fde047;
+  --belt-orange-color: #fb923c;
+  --belt-green-color: #4ade80;
+  --belt-blue-color: #60a5fa;
+  --belt-purple-color: #c084fc;
+  --belt-brown-color: #a8715a;
+  --belt-black-color: #18181b;
+
+  /* Motion */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 150ms;
+  --dur-mid: 280ms;
+  --dur-slow: 480ms;
 }
 
 [data-md-color-scheme="slate"] {
-  --dojo-bg: #121214;
-  --dojo-ink: #f4f4f5;
-  --dojo-surface: #1e1e24;
-  --dojo-border: #3f3f46;
-  --dojo-muted: #a1a1aa;
+  --dojo-bg: #0a0a0f;
+  --dojo-ink: #f1f5f9;
+  --dojo-surface: #13131a;
+  --dojo-border: #2a2a3a;
+  --dojo-muted: #94a3b8;
   --dojo-success-bg: #052e16;
   --dojo-warn-bg: #422006;
   --dojo-error-bg: #450a0a;
+  --dojo-editor-bg: #080810;
+  --dojo-editor-gutter: #111118;
 }
 
-/* Base Body tweaks */
+/* ─── Smooth Page Foundation ──────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--dojo-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Visible focus for accessibility */
+/* ─── Focus Ring ──────────────────────────────────────────────────── */
 button:focus-visible,
 textarea:focus-visible,
 input:focus-visible,
 a:focus-visible,
 .dojo-term:focus-visible {
-  outline: 3px solid #2563eb !important;
-  outline-offset: 2px !important;
+  outline: 2px solid var(--dojo-accent) !important;
+  outline-offset: 3px !important;
+  border-radius: 3px !important;
 }
 
-/* Header HUD */
+/* ─── HUD ─────────────────────────────────────────────────────────── */
 .dojo-hud {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.5rem 1rem;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.85rem;
+  gap: 0.4rem 0.8rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.82rem;
   font-weight: 500;
+  animation: hudFadeDown var(--dur-mid) var(--ease-spring) both;
 }
 
-.dojo-hud-belt {
-  display: flex;
-  align-items: center;
+@keyframes hudFadeDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .dojo-belt-badge {
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  border: 1px solid var(--dojo-border);
+  position: relative;
+  padding: 0.2rem 0.65rem 0.2rem 0.5rem;
+  border-radius: 20px;
+  border: 1.5px solid var(--dojo-border);
   background: var(--dojo-surface);
   color: var(--dojo-ink);
+  letter-spacing: 0.01em;
+  transition: border-color var(--dur-fast) var(--ease-smooth),
+              box-shadow var(--dur-fast) var(--ease-smooth),
+              transform var(--dur-fast) var(--ease-bounce);
+  overflow: hidden;
+}
+
+.dojo-belt-badge::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 60%, rgba(255,255,255,0.08));
+  pointer-events: none;
+}
+
+.dojo-belt-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* XP & streak shimmer on hover */
+.dojo-hud-xp,
+.dojo-hud-streak {
+  transition: transform var(--dur-fast) var(--ease-bounce);
+  cursor: default;
+}
+
+.dojo-hud-xp:hover,
+.dojo-hud-streak:hover {
+  transform: scale(1.1);
+}
+
+/* XP update animation (triggered by JS adding class) */
+.dojo-xp-bump {
+  animation: xpBump 0.5s var(--ease-bounce);
+}
+
+@keyframes xpBump {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.3); color: #166534; }
+  100% { transform: scale(1); }
 }
 
 .dojo-hud-menu-wrapper {
@@ -86,27 +158,45 @@ a:focus-visible,
 
 .dojo-btn-hud-menu {
   background: var(--dojo-surface);
-  border: 1px solid var(--dojo-border);
-  border-radius: 4px;
-  padding: 0.2rem 0.5rem;
+  border: 1.5px solid var(--dojo-border);
+  border-radius: 20px;
+  padding: 0.2rem 0.65rem;
   cursor: pointer;
   color: var(--dojo-ink);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast),
+              transform var(--dur-fast) var(--ease-bounce);
+}
+
+.dojo-btn-hud-menu:hover {
+  border-color: var(--dojo-accent);
+  box-shadow: 0 0 0 3px var(--dojo-accent-glow);
+  transform: translateY(-1px);
 }
 
 .dojo-hud-dropdown {
   position: absolute;
   right: 0;
-  top: 100%;
-  margin-top: 4px;
+  top: calc(100% + 6px);
   background: var(--dojo-surface);
-  border: 1px solid var(--dojo-border);
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-width: 200px;
-  z-index: 100;
+  border: 1.5px solid var(--dojo-border);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0,0,0,0.08);
+  min-width: 210px;
+  z-index: 200;
   display: flex;
   flex-direction: column;
+  padding: 0.3rem;
+  transform-origin: top right;
+  animation: dropdownOpen var(--dur-mid) var(--ease-spring) both;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@keyframes dropdownOpen {
+  from { opacity: 0; transform: scale(0.9) translateY(-6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .dojo-menu-item {
@@ -115,292 +205,527 @@ a:focus-visible,
   padding: 0.5rem 0.75rem;
   background: none;
   border: none;
+  border-radius: 7px;
   text-align: left;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   color: var(--dojo-ink);
   cursor: pointer;
+  transition: background var(--dur-fast), transform var(--dur-fast) var(--ease-bounce);
 }
 
 .dojo-menu-item:hover,
 .dojo-menu-item:focus {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.055);
+  transform: translateX(2px);
 }
 
-[data-md-color-scheme="slate"] .dojo-menu-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+[data-md-color-scheme="slate"] .dojo-menu-item:hover,
+[data-md-color-scheme="slate"] .dojo-menu-item:focus {
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .dojo-menu-item-danger {
   color: var(--dojo-error);
   border-top: 1px solid var(--dojo-border);
+  margin-top: 0.3rem;
+  padding-top: 0.6rem;
 }
 
-/* Storage Notice */
+.dojo-menu-item-danger:hover {
+  background: rgba(220, 38, 38, 0.08) !important;
+}
+
+/* ─── Storage Notice ─────────────────────────────────────────────── */
 .dojo-storage-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   background: var(--dojo-warn-bg);
-  border: 1px solid var(--dojo-warn);
+  border: 1.5px solid var(--dojo-warn);
   color: var(--dojo-warn);
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
   margin-bottom: 1rem;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  animation: noticeSlide var(--dur-mid) var(--ease-spring) both;
 }
 
-/* Dojo Cell Container */
+@keyframes noticeSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Dojo Cell ───────────────────────────────────────────────────── */
 .dojo-cell {
-  margin: 1.5rem 0;
+  margin: 2rem 0;
+  animation: cellFadeIn var(--dur-slow) var(--ease-spring) both;
+}
+
+@keyframes cellFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .dojo-cell-wrapper {
-  border: 1px solid var(--dojo-border);
-  border-radius: 8px;
+  position: relative;
+  border: 1.5px solid var(--dojo-border);
+  border-radius: 12px;
   background: var(--dojo-surface);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 4px 16px rgba(0, 0, 0, 0.04);
   overflow: hidden;
+  transition: border-color var(--dur-mid) var(--ease-smooth),
+              box-shadow var(--dur-mid) var(--ease-smooth),
+              transform var(--dur-mid) var(--ease-smooth);
 }
 
-/* Editor Layout */
+.dojo-cell-wrapper:hover {
+  border-color: rgba(220, 38, 38, 0.3);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 8px 32px rgba(0, 0, 0, 0.07),
+    0 0 0 1px rgba(220, 38, 38, 0.08);
+}
+
+/* Focused cell ring */
+.dojo-cell-wrapper:focus-within {
+  border-color: var(--dojo-accent);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 0 0 3px var(--dojo-accent-glow);
+  transform: translateY(-1px);
+}
+
+/* Exercise type indicator stripe */
+.dojo-cell-wrapper[data-type="exercise"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--dojo-accent), #f97316, #eab308);
+  background-size: 200% 100%;
+  animation: shimmerStripe 3s linear infinite;
+}
+
+@keyframes shimmerStripe {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── Editor ──────────────────────────────────────────────────────── */
 .dojo-editor-container {
   display: flex;
-  min-height: 120px;
-  background: #1e1e24; /* Keep editor dark and sleek for contrast */
-  color: #f4f4f5;
-  border-bottom: 1px solid var(--dojo-border);
+  min-height: 130px;
+  background: var(--dojo-editor-bg);
+  color: var(--dojo-editor-fg);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  position: relative;
+}
+
+/* Scanline texture on editor */
+.dojo-editor-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 23px,
+    rgba(255, 255, 255, 0.013) 23px,
+    rgba(255, 255, 255, 0.013) 24px
+  );
+  pointer-events: none;
 }
 
 .dojo-gutter {
-  width: 2.5rem;
-  padding: 0.75rem 0.25rem 0.75rem 0;
+  width: 2.75rem;
+  padding: 0.85rem 0.5rem 0.85rem 0;
   text-align: right;
-  color: #71717a;
+  background: var(--dojo-editor-gutter);
+  color: #4a5568;
   user-select: none;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-  font-size: 0.95rem;
-  line-height: 1.5rem;
+  font-size: 0.82rem;
+  line-height: 1.6rem;
   overflow: hidden;
+  border-right: 1px solid rgba(255,255,255,0.04);
+  transition: color var(--dur-mid);
 }
 
 .dojo-textarea {
   flex: 1;
-  padding: 0.75rem;
+  padding: 0.85rem 0.85rem 0.85rem 1rem;
   border: none;
   outline: none;
   resize: vertical;
   background: transparent;
-  color: #f4f4f5;
+  color: var(--dojo-editor-fg);
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-  font-size: 0.95rem;
-  line-height: 1.5rem;
+  font-size: 0.925rem;
+  line-height: 1.6rem;
   white-space: pre;
   overflow-x: auto;
   tab-size: 2;
+  caret-color: var(--dojo-editor-cursor);
+  selection-background-color: var(--dojo-editor-selection);
+  transition: background var(--dur-fast);
+  z-index: 1;
+  position: relative;
 }
 
-/* Cell Toolbar */
+.dojo-textarea::selection {
+  background: var(--dojo-editor-selection);
+}
+
+/* ─── Toolbar ─────────────────────────────────────────────────────── */
 .dojo-cell-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: var(--dojo-bg);
+  gap: 0.4rem;
+  padding: 0.55rem 0.75rem;
+  background: color-mix(in srgb, var(--dojo-bg) 85%, transparent);
   border-bottom: 1px solid var(--dojo-border);
+  backdrop-filter: blur(4px);
 }
 
 .dojo-toolbar-left {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.35rem;
+  align-items: center;
 }
 
+/* ─── Buttons ─────────────────────────────────────────────────────── */
 .dojo-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.4rem 0.8rem;
-  font-size: 0.85rem;
+  padding: 0.38rem 0.9rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  border-radius: 4px;
-  border: 1px solid var(--dojo-border);
+  border-radius: 7px;
+  border: 1.5px solid var(--dojo-border);
   background: var(--dojo-surface);
   color: var(--dojo-ink);
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform var(--dur-fast) var(--ease-bounce),
+    box-shadow var(--dur-fast) var(--ease-smooth),
+    background var(--dur-fast) var(--ease-smooth),
+    border-color var(--dur-fast);
+}
+
+/* Ripple layer */
+.dojo-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--rx, 50%) var(--ry, 50%), rgba(255,255,255,0.3) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.dojo-btn:active::after {
+  opacity: 1;
+  transition: opacity 0s;
 }
 
 .dojo-btn:hover {
-  opacity: 0.85;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
 }
 
+.dojo-btn:active {
+  transform: translateY(0px) scale(0.97);
+  box-shadow: none;
+}
+
+/* Run button */
 .dojo-btn-run {
-  background: #18181b;
+  background: linear-gradient(135deg, #18181b, #2d2d35);
   color: #ffffff;
   border-color: #18181b;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.dojo-btn-run:hover {
+  background: linear-gradient(135deg, #2d2d35, #3f3f4a);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+/* Run button: loading pulse */
+.dojo-btn-run.is-running {
+  animation: runPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes runPulse {
+  0%, 100% { box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+  50%       { box-shadow: 0 0 0 4px rgba(24,24,27,0.25); }
 }
 
 [data-md-color-scheme="slate"] .dojo-btn-run {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-color: #2563eb;
+  box-shadow: 0 1px 3px rgba(37,99,235,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
+/* Check button */
 .dojo-btn-check {
-  background: #166534;
+  background: linear-gradient(135deg, #15803d, #166534);
   color: #ffffff;
-  border-color: #166534;
+  border-color: #15803d;
+  box-shadow: 0 1px 3px rgba(21,128,61,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
+.dojo-btn-check:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  box-shadow: 0 4px 14px rgba(21,128,61,0.35);
+}
+
+/* Tip button */
 .dojo-btn-tip {
-  background: #fef08a;
+  background: linear-gradient(135deg, #fef08a, #fde047);
   color: #713f12;
-  border-color: #eab308;
+  border-color: #ca8a04;
+  box-shadow: 0 1px 3px rgba(202,138,4,0.3);
+}
+
+.dojo-btn-tip:hover {
+  background: linear-gradient(135deg, #fde047, #facc15);
+  box-shadow: 0 4px 14px rgba(202,138,4,0.3);
+}
+
+/* Reset */
+.dojo-btn-reset {
+  color: var(--dojo-muted);
+  border-color: var(--dojo-border);
+}
+
+.dojo-btn-reset:hover {
+  color: var(--dojo-ink);
+  border-color: var(--dojo-muted);
 }
 
 .dojo-shortcut-hint {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--dojo-muted);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Tips Ladder */
+/* ─── Tips Ladder ─────────────────────────────────────────────────── */
 .dojo-tips-ladder {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.75rem;
-  background: var(--dojo-warn-bg);
+  background: color-mix(in srgb, var(--dojo-warn-bg) 70%, transparent);
   border-bottom: 1px solid var(--dojo-border);
 }
 
 .dojo-tip-box {
-  padding: 0.5rem 0.75rem;
+  padding: 0.55rem 0.85rem;
   background: var(--dojo-surface);
-  border-left: 4px solid #eab308;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  border-left: 3px solid #eab308;
+  border-radius: 6px;
+  font-size: 0.88rem;
   color: var(--dojo-ink);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  animation: tipSlide var(--dur-mid) var(--ease-spring) both;
+}
+
+@keyframes tipSlide {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 .dojo-solution-box {
   padding: 0.75rem;
   background: var(--dojo-surface);
-  border-left: 4px solid #3b82f6;
-  border-radius: 4px;
+  border-left: 3px solid #3b82f6;
+  border-radius: 6px;
   font-size: 0.9rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  animation: tipSlide var(--dur-mid) var(--ease-spring) both;
 }
 
 .dojo-solution-box pre {
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  background: #1e1e24;
-  color: #f4f4f5;
-  border-radius: 4px;
-  font-size: 0.85rem;
+  margin: 0.5rem 0 0;
+  padding: 0.65rem 0.75rem;
+  background: var(--dojo-editor-bg);
+  color: var(--dojo-editor-fg);
+  border-radius: 6px;
+  font-size: 0.84rem;
+  overflow-x: auto;
 }
 
-/* Output Panel */
+/* ─── Output Panel ────────────────────────────────────────────────── */
 .dojo-cell-output {
   padding: 0.75rem;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  min-height: 0;
+  transition: min-height var(--dur-mid) var(--ease-smooth);
 }
 
 .dojo-output-status {
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
   margin-bottom: 0.5rem;
+  animation: statusIn var(--dur-mid) var(--ease-spring) both;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes statusIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Success shimmer */
+.dojo-status-success::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.15) 60%, transparent 70%);
+  animation: successShimmer 1s ease 0.1s both;
+}
+
+@keyframes successShimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(200%); }
 }
 
 .dojo-status-loading {
-  background: #eff6ff;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
   color: #1e40af;
-  border: 1px solid #bfdbfe;
+  border: 1.5px solid #bfdbfe;
+}
+
+/* Loading dots */
+.dojo-status-loading::before {
+  content: '';
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-right: 0.5rem;
+  animation: loadingDot 1s ease-in-out infinite;
+}
+
+@keyframes loadingDot {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50%       { opacity: 1; transform: scale(1); }
 }
 
 .dojo-status-success {
-  background: var(--dojo-success-bg);
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
   color: var(--dojo-success);
-  border: 1px solid #bbf7d0;
+  border: 1.5px solid #bbf7d0;
 }
 
 .dojo-status-failed {
-  background: var(--dojo-warn-bg);
+  background: linear-gradient(135deg, var(--dojo-warn-bg), #fef3c7);
   color: var(--dojo-warn);
-  border: 1px solid #fef08a;
+  border: 1.5px solid #fde68a;
 }
 
 .dojo-status-error {
-  background: var(--dojo-error-bg);
+  background: linear-gradient(135deg, var(--dojo-error-bg), #fee2e2);
   color: var(--dojo-error);
-  border: 1px solid #fecaca;
+  border: 1.5px solid #fecaca;
 }
 
-.dojo-error-card strong {
-  font-size: 1rem;
-}
-
-.dojo-error-body p {
-  margin: 0.25rem 0;
-}
+.dojo-error-card strong { font-size: 0.95rem; }
+.dojo-error-body p { margin: 0.3rem 0; line-height: 1.6; }
 
 .dojo-try-this {
   background: rgba(0, 0, 0, 0.04);
-  padding: 0.4rem 0.6rem;
-  border-radius: 4px;
+  padding: 0.4rem 0.65rem;
+  border-radius: 6px;
+  border-left: 3px solid currentColor;
+  margin-top: 0.4rem;
 }
 
 .dojo-error-details {
-  margin-top: 0.5rem;
-  font-size: 0.85rem;
+  margin-top: 0.6rem;
+  font-size: 0.83rem;
 }
 
 .dojo-error-details summary {
   cursor: pointer;
   color: var(--dojo-muted);
+  user-select: none;
+  transition: color var(--dur-fast);
 }
+
+.dojo-error-details summary:hover { color: var(--dojo-ink); }
 
 .dojo-error-details pre {
   margin-top: 0.5rem;
-  padding: 0.5rem;
-  background: #18181b;
-  color: #f4f4f5;
-  border-radius: 4px;
+  padding: 0.65rem 0.75rem;
+  background: var(--dojo-editor-bg);
+  color: var(--dojo-editor-fg);
+  border-radius: 6px;
   white-space: pre-wrap;
   word-break: break-all;
+  font-size: 0.8rem;
+  line-height: 1.6;
 }
 
 .dojo-output-content {
-  background: #18181b;
-  color: #f4f4f5;
-  padding: 0.75rem;
-  border-radius: 6px;
-  margin: 0.25rem 0 0 0;
+  background: var(--dojo-editor-bg);
+  color: var(--dojo-editor-fg);
+  padding: 0.75rem 0.85rem;
+  border-radius: 8px;
+  margin: 0.3rem 0 0;
   white-space: pre-wrap;
   word-break: break-all;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  animation: outputIn var(--dur-mid) var(--ease-spring) both;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+@keyframes outputIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .dojo-output-eval {
   margin-top: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 
 .dojo-eval-badge {
   background: var(--dojo-border);
-  padding: 0.15rem 0.4rem;
-  border-radius: 3px;
-  font-size: 0.8rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
   margin-right: 0.4rem;
+  letter-spacing: 0.03em;
+  font-weight: 600;
 }
 
-/* Toast Container */
+/* ─── Toast ───────────────────────────────────────────────────────── */
 .dojo-toast-container {
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
   z-index: 1000;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex-direction: column-reverse;
+  gap: 0.6rem;
+  pointer-events: none;
 }
 
 .dojo-toast {
@@ -409,16 +734,45 @@ a:focus-visible,
   gap: 0.75rem;
   background: var(--dojo-surface);
   color: var(--dojo-ink);
-  border: 2px solid var(--dojo-accent);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  border: 1.5px solid var(--dojo-accent);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(220, 38, 38, 0.1),
+    0 1px 0 rgba(255,255,255,0.08) inset;
   min-width: 260px;
   max-width: 380px;
+  pointer-events: auto;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmer line across top of toast */
+.dojo-toast::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--dojo-accent), #f97316, #eab308, var(--dojo-accent));
+  background-size: 200%;
+  animation: toastStripe 2s linear infinite;
+}
+
+@keyframes toastStripe {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
 }
 
 .dojo-toast-animated {
-  animation: dojoSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: toastIn var(--dur-mid) var(--ease-spring) both;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(32px) scale(0.9); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
 }
 
 .dojo-toast-static {
@@ -426,70 +780,185 @@ a:focus-visible,
 }
 
 .dojo-toast-fade {
-  opacity: 0;
-  transition: opacity 0.5s ease;
+  animation: toastOut var(--dur-mid) var(--ease-smooth) both !important;
 }
 
-@keyframes dojoSlideIn {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+@keyframes toastOut {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.9) translateX(16px); }
+}
+
+.dojo-toast-panda {
+  flex-shrink: 0;
+  animation: pandaWiggle 1.2s var(--ease-spring) 0.2s both;
+}
+
+@keyframes pandaWiggle {
+  0%   { transform: scale(0) rotate(-15deg); }
+  60%  { transform: scale(1.15) rotate(5deg); }
+  80%  { transform: scale(0.95) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+.dojo-toast-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  line-height: 1.4;
 }
 
 .dojo-toast-xp {
   display: inline-block;
-  margin-top: 0.25rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #166534;
+  font-size: 1rem;
+  animation: xpPop 0.5s var(--ease-bounce) 0.3s both;
 }
 
-/* Glossary Tooltips */
+@keyframes xpPop {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Glossary Tooltip ────────────────────────────────────────────── */
 .dojo-term {
-  text-decoration: underline dotted #dc2626;
+  text-decoration: underline dotted var(--dojo-accent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 2px;
   cursor: help;
   position: relative;
+  transition: color var(--dur-fast);
 }
 
-/* Predict Box */
+.dojo-term:hover {
+  color: var(--dojo-accent);
+}
+
+/* ─── Predict Box ─────────────────────────────────────────────────── */
 .dojo-predict-box {
-  border: 1px solid var(--dojo-border);
+  border: 1.5px solid var(--dojo-border);
   background: var(--dojo-surface);
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-  margin: 1rem 0;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  margin: 1.25rem 0;
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+}
+
+.dojo-predict-box:hover {
+  border-color: rgba(37, 99, 235, 0.4);
+  box-shadow: 0 2px 12px rgba(37,99,235,0.08);
 }
 
 .dojo-predict-box details summary {
   cursor: pointer;
   font-weight: 600;
   color: #2563eb;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: gap var(--dur-fast);
 }
 
-/* Mobile Usability (360px) */
+.dojo-predict-box details summary:hover {
+  gap: 0.6rem;
+}
+
+.dojo-predict-box details summary::before {
+  content: '▶';
+  font-size: 0.65em;
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+
+.dojo-predict-box details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.dojo-predict-box details[open] > :not(summary) {
+  animation: revealDown var(--dur-mid) var(--ease-spring) both;
+}
+
+@keyframes revealDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Feedback Cards ──────────────────────────────────────────────── */
+.dojo-feedback-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dojo-feedback-success strong {
+  font-size: 1rem;
+}
+
+/* ─── Mobile (360px) ──────────────────────────────────────────────── */
 @media (max-width: 480px) {
   .dojo-hud {
-    font-size: 0.75rem;
-    gap: 0.3rem 0.5rem;
+    font-size: 0.74rem;
+    gap: 0.25rem 0.4rem;
   }
+
+  .dojo-toast-container {
+    right: 0.75rem;
+    left: 0.75rem;
+    bottom: 0.75rem;
+  }
+
   .dojo-toast {
-    right: 0.5rem;
-    left: 0.5rem;
-    min-width: auto;
+    min-width: unset;
+    max-width: 100%;
   }
+
   .dojo-cell-toolbar {
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .dojo-btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.75rem;
+  }
 }
 
-/* Prefers Reduced Motion */
+/* ─── Scroll-Entrance Animation via Intersection Observer ─────────── */
+/* JS adds .dojo-reveal on elements; they begin invisible */
+.dojo-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--dur-slow) var(--ease-smooth),
+              transform var(--dur-slow) var(--ease-smooth);
+}
+
+.dojo-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Belt badge colour accents ──────────────────────────────────── */
+.dojo-belt-white  { border-left: 3px solid var(--belt-white-color); }
+.dojo-belt-yellow { border-left: 3px solid var(--belt-yellow-color); }
+.dojo-belt-orange { border-left: 3px solid var(--belt-orange-color); }
+.dojo-belt-green  { border-left: 3px solid var(--belt-green-color); }
+.dojo-belt-blue   { border-left: 3px solid var(--belt-blue-color); }
+.dojo-belt-purple { border-left: 3px solid var(--belt-purple-color); }
+.dojo-belt-brown  { border-left: 3px solid var(--belt-brown-color); }
+.dojo-belt-black  { border-left: 3px solid var(--belt-black-color); }
+
+/* ─── Home Page Hero Cell Accent ─────────────────────────────────── */
+.dojo-cell-wrapper.hero {
+  border-color: var(--dojo-accent);
+  box-shadow: 0 0 0 1px var(--dojo-accent-glow), 0 8px 32px rgba(0,0,0,0.1);
+}
+
+/* ─── Reduced Motion ──────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

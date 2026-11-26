@@ -80,6 +80,66 @@ function bootPage() {
   });
 
   initGlossary();
+  initScrollReveal();
+  initButtonRipples();
+}
+
+/**
+ * Scroll-entrance reveal using IntersectionObserver.
+ * Adds `.dojo-reveal` (invisible + shifted) then `.is-visible` (animated in)
+ * when each cell enters the viewport. Degrades gracefully if no IO support.
+ */
+function initScrollReveal() {
+  const targets = document.querySelectorAll('.dojo-cell, .dojo-predict-box, .dojo-exercise');
+  if (!targets.length) return;
+
+  if (!('IntersectionObserver' in window)) {
+    // Older browsers — make everything visible immediately
+    targets.forEach(el => el.classList.add('dojo-reveal', 'is-visible'));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Stagger siblings within the same parent for a cascade effect
+          const siblings = entry.target.parentElement
+            ? [...entry.target.parentElement.querySelectorAll('.dojo-reveal:not(.is-visible)')]
+            : [entry.target];
+          const idx = siblings.indexOf(entry.target);
+          const delay = Math.min(idx * 60, 300); // cap cascade at 300 ms
+          setTimeout(() => {
+            entry.target.classList.add('is-visible');
+          }, delay);
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.08, rootMargin: '0px 0px -48px 0px' }
+  );
+
+  targets.forEach(el => {
+    el.classList.add('dojo-reveal');
+    observer.observe(el);
+  });
+}
+
+/**
+ * Button ripple — tracks the exact click position so the CSS radial-gradient
+ * ripple originates from the finger/cursor rather than the button centre.
+ * Sets CSS custom props --rx / --ry consumed by dojo.css.
+ */
+function initButtonRipples() {
+  document.querySelectorAll('.dojo-btn').forEach(btn => {
+    btn.addEventListener('pointerdown', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+      const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+      btn.style.setProperty('--rx', x + '%');
+      btn.style.setProperty('--ry', y + '%');
+    });
+  });
 }
 
 // Support MkDocs Material instant navigation via document$
