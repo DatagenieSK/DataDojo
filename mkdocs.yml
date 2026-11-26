@@ -51,6 +51,12 @@ markdown_extensions:
         - name: dojo-exercise
           class: dojo-exercise
           format: !!python/name:tools.dojo_markdown.fence_dojo_exercise
+        - name: dojo-quiz
+          class: dojo-quiz
+          format: !!python/name:tools.dojo_markdown.fence_dojo_quiz
+        - name: dojo-order
+          class: dojo-order
+          format: !!python/name:tools.dojo_markdown.fence_dojo_order
 
 nav:
   - Home: index.md

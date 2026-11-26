@@ -72,6 +72,13 @@ test('translates ModuleNotFoundError', () => {
   assert.match(result.explain, /nonexistent/);
 });
 
+test('translates input() unsupported error', () => {
+  const result = translate('RuntimeError: input() is not supported in this dojo yet.');
+  assert.equal(result.title, 'Asking Questions with input()');
+  assert.match(result.explain, /can't ask you questions with `input\(\)` yet/i);
+  assert.match(result.tryThis, /name = "Asha"/);
+});
+
 test('falls back gracefully on unknown errors', () => {
   const result = translate('CustomSystemError: hardware interrupted');
   assert.equal(result.title, 'Python Notice');

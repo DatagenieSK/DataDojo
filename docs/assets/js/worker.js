@@ -39,6 +39,12 @@ async function initPyodide() {
 import sys
 import io
 import ast
+import builtins
+
+def _disabled_input(prompt=None):
+    raise RuntimeError("input() is not supported in this dojo yet. Try setting a variable instead.")
+
+builtins.input = _disabled_input
 
 try:
     from dojo_helpers import DojoTestContext, TestFailure
@@ -69,12 +75,14 @@ class DojoRunner:
         self.namespace = {
             '__name__': '__main__',
             '__doc__': None,
+            'input': _disabled_input,
         }
 
     def reset(self):
         self.namespace = {
             '__name__': '__main__',
             '__doc__': None,
+            'input': _disabled_input,
         }
 
     def _exec_code(self, code_str, capture_stdout=True):

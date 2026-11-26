@@ -5,6 +5,9 @@
 import { ProgressStore } from './progress.js';
 import { DojoHUD } from './hud.js';
 import { initCell } from './cell.js';
+import { initQuiz } from './quiz.js';
+import { initOrder } from './order.js';
+import { initGrading } from './grading.js';
 
 let progressStore = null;
 let hud = null;
@@ -66,6 +69,14 @@ function bootPage() {
   }
   hud.mount();
 
+  // Check for grading container
+  const gradingEl = document.querySelector('.dojo-grading-container');
+  let gradingCtrl = null;
+  if (gradingEl && gradingEl.dataset.initialized !== 'true') {
+    gradingEl.dataset.initialized = 'true';
+    gradingCtrl = initGrading(gradingEl, { progressStore, hud });
+  }
+
   // Find all dojo-cell nodes
   const cells = document.querySelectorAll('.dojo-cell');
   cells.forEach((container) => {
@@ -73,15 +84,64 @@ function bootPage() {
     if (container.dataset.initialized === 'true') return;
     container.dataset.initialized = 'true';
 
+    const isGradingTask = container.dataset.covers !== undefined && container.dataset.covers !== '';
+
     initCell(container, {
       progressStore,
       onExerciseComplete: ({ id, earnedXp, firstTime, usedTips }) => {
+        if (isGradingTask) {
+          progressStore.completeGradingTask(id);
+          if (gradingCtrl) gradingCtrl.onTaskComplete();
+          hud.render();
+          if (firstTime) {
+            hud.showToast('🥋 Task Completed!', 'Great form on this grading task.', 0);
+          }
+          return;
+        }
+
         hud.render();
         if (firstTime) {
           const tipNote = usedTips === 0 ? 'Flawless execution! Hint-free bonus awarded.' : 'Well done sparring!';
           hud.showToast('🥋 Nice kick!', tipNote, earnedXp);
         } else {
           hud.showToast('🥋 Kata Repeated', 'Good form! Repetition builds mastery.', 0);
+        }
+      },
+    });
+  });
+
+  // Find all dojo-quiz nodes
+  const quizzes = document.querySelectorAll('.dojo-quiz');
+  quizzes.forEach((container) => {
+    if (container.dataset.initialized === 'true') return;
+    container.dataset.initialized = 'true';
+
+    initQuiz(container, {
+      progressStore,
+      onQuizComplete: ({ id, earnedXp, firstTime }) => {
+        hud.render();
+        if (firstTime) {
+          hud.showToast('🎯 Quiz Mastered!', 'Quick check completed perfectly.', earnedXp);
+        }
+      },
+    });
+  });
+
+  // Find all dojo-order nodes
+  const orders = document.querySelectorAll('.dojo-order');
+  orders.forEach((container) => {
+    if (container.dataset.initialized === 'true') return;
+    container.dataset.initialized = 'true';
+
+    initOrder(container, {
+      progressStore,
+      onOrderComplete: ({ id, earnedXp, firstTime, usedTips }) => {
+        hud.render();
+        if (firstTime) {
+          const tipNote = usedTips === 0 ? 'Flawless line arrangement! Hint-free bonus awarded.' : 'Well ordered!';
+          hud.showToast('🧩 Lines Arranged!', tipNote, earnedXp);
+        } else {
+          hud.showToast('🧩 Repeated', 'Good practice rearranging lines.', 0);
         }
       },
     });
@@ -98,7 +158,7 @@ function bootPage() {
  * when each cell enters the viewport. Degrades gracefully if no IO support.
  */
 function initScrollReveal() {
-  const targets = document.querySelectorAll('.dojo-cell, .dojo-predict-box, .dojo-exercise');
+  const targets = document.querySelectorAll('.dojo-cell, .dojo-predict-box, .dojo-exercise, .dojo-quiz, .dojo-order, .dojo-grading-banner');
   if (!targets.length) return;
 
   if (!('IntersectionObserver' in window)) {

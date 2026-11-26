@@ -6,9 +6,12 @@ export const CONFIG = {
   PYODIDE_CDN_BASE: 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/',
   EXECUTION_TIMEOUT_MS: 10000,
   STORAGE_KEY: 'datadojo:v1',
+  SCHEMA_VERSION: 2,
   XP: {
     COMPLETE_EXERCISE: 10,
     HINT_FREE_BONUS: 5,
+    COMPLETE_QUIZ: 5,
+    CLAIM_BELT: 50,
   },
   BELTS: [
     { id: 'white', name: 'White', subtitle: 'Start Here', color: '#f3f4f6' },

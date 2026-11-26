@@ -951,6 +951,272 @@ a:focus-visible,
   transform: translateY(0);
 }
 
+/* ─── Dojo Quiz Component ─────────────────────────────────────── */
+.dojo-quiz {
+  margin: 1.5rem 0;
+}
+
+.dojo-quiz-wrapper {
+  background: var(--dojo-surface);
+  border: 1.5px solid var(--dojo-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.dojo-quiz-header {
+  margin-bottom: 1rem;
+}
+
+.dojo-quiz-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.05rem;
+  flex-wrap: wrap;
+}
+
+.dojo-quiz-xp-badge {
+  background: var(--dojo-warn-bg);
+  color: var(--dojo-warn);
+  border: 1px solid var(--dojo-warn);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+}
+
+.dojo-quiz-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.dojo-quiz-question-card {
+  border: 1px solid var(--dojo-border);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--dojo-bg);
+}
+
+.dojo-quiz-q-text {
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  color: var(--dojo-ink);
+}
+
+.dojo-quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dojo-quiz-option-label {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid var(--dojo-border);
+  background: var(--dojo-surface);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-smooth);
+}
+
+.dojo-quiz-option-label:hover {
+  border-color: var(--dojo-accent);
+  background: var(--dojo-bg);
+}
+
+.dojo-quiz-option-label.is-correct {
+  border-color: var(--dojo-success);
+  background: var(--dojo-success-bg);
+  color: var(--dojo-success);
+  font-weight: 600;
+}
+
+.dojo-quiz-option-label.is-wrong {
+  border-color: var(--dojo-error);
+  background: var(--dojo-error-bg);
+  color: var(--dojo-error);
+}
+
+.dojo-quiz-feedback {
+  margin-top: 0.65rem;
+  font-size: 0.88rem;
+  min-height: 1.2rem;
+}
+
+.dojo-quiz-feedback.feedback-correct {
+  color: var(--dojo-success);
+}
+
+.dojo-quiz-feedback.feedback-wrong {
+  color: var(--dojo-warn);
+}
+
+/* ─── Dojo Order (Parsons Problem) Component ─────────────────── */
+.dojo-order {
+  margin: 1.5rem 0;
+}
+
+.dojo-order-wrapper {
+  background: var(--dojo-surface);
+  border: 1.5px solid var(--dojo-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.dojo-order-header {
+  margin-bottom: 1rem;
+}
+
+.dojo-order-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.05rem;
+  flex-wrap: wrap;
+}
+
+.dojo-order-xp-badge {
+  background: var(--dojo-warn-bg);
+  color: var(--dojo-warn);
+  border: 1px solid var(--dojo-warn);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+}
+
+.dojo-order-goal {
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--dojo-muted);
+}
+
+.dojo-order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.dojo-order-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--dojo-editor-bg);
+  border: 1px solid var(--dojo-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+
+.dojo-order-item-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dojo-order-btn {
+  background: var(--dojo-surface);
+  border: 1px solid var(--dojo-border);
+  color: var(--dojo-ink);
+  font-size: 0.7rem;
+  line-height: 1;
+  padding: 3px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-smooth);
+}
+
+.dojo-order-btn:hover:not(:disabled) {
+  background: var(--dojo-accent);
+  color: #fff;
+  border-color: var(--dojo-accent);
+}
+
+.dojo-order-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.dojo-order-code {
+  flex: 1;
+  overflow-x: auto;
+}
+
+.dojo-order-code pre {
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+}
+
+.dojo-order-code code {
+  color: var(--dojo-editor-fg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88rem;
+  white-space: pre;
+}
+
+/* ─── Dojo Grading Banner Component ───────────────────────────── */
+.dojo-grading-container {
+  margin-top: 1rem;
+}
+
+.dojo-grading-banner {
+  background: linear-gradient(135deg, var(--dojo-surface), var(--dojo-bg));
+  border: 2px solid var(--dojo-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+}
+
+.dojo-grading-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.dojo-grading-pass-target {
+  font-size: 0.85rem;
+  color: var(--dojo-muted);
+}
+
+.dojo-grading-status {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--dojo-ink);
+  margin-bottom: 1rem;
+}
+
+.dojo-btn-claim-belt {
+  background: linear-gradient(135deg, #b91c1c, #dc2626);
+  color: #ffffff !important;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px var(--dojo-accent-glow);
+  animation: pulseClaim 2s infinite;
+}
+
+@keyframes pulseClaim {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 16px var(--dojo-accent-glow);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 6px 24px var(--dojo-accent-glow);
+  }
+}
+
 /* ─── Belt badge colour accents ──────────────────────────────────── */
 .dojo-belt-white  { border-left: 3px solid var(--belt-white-color); }
 .dojo-belt-yellow { border-left: 3px solid var(--belt-yellow-color); }

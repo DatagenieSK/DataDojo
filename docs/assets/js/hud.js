@@ -40,14 +40,7 @@ export class DojoHUD {
   }
 
   getCurrentBelt() {
-    // Current belt: first belt not fully complete
-    // In Phase 1, White Belt has katas, others are future
-    const whiteKataIds = ['white-01-hello', 'white-02-variables'];
-    const whiteProgress = this.progressStore.calculateBeltProgress(whiteKataIds);
-    if (!whiteProgress.isComplete) {
-      return CONFIG.BELTS[0]; // White
-    }
-    return CONFIG.BELTS[1]; // Yellow
+    return this.progressStore.getCurrentBelt();
   }
 
   render() {
@@ -174,5 +167,14 @@ export class DojoHUD {
         if (toast.parentNode) toast.parentNode.removeChild(toast);
       }, 500);
     }, 4000);
+  }
+
+  showBeltCelebration(belt) {
+    this.render();
+    this.showToast(
+      `🥋 ${belt.name} Belt Earned!`,
+      `Sensei Panda bows with deep respect! You have mastered the ${belt.name} Belt (${belt.subtitle}).`,
+      CONFIG.XP.CLAIM_BELT
+    );
   }
 }

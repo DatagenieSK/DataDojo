@@ -29,9 +29,10 @@ export function daysBetween(dateStrA, dateStrB) {
 
 export function createDefaultState(todayStr = getLocalDateString()) {
   return {
-    v: 1,
+    v: 2,
     xp: 0,
     completed: {},
+    belts: {},
     streak: { count: 0, lastDay: null },
     createdAt: todayStr,
   };
@@ -41,27 +42,47 @@ export function migrateState(raw) {
   if (!raw || typeof raw !== 'object') {
     return createDefaultState();
   }
-  // Migration hook for future versions
-  if (!raw.v || raw.v === 1) {
-    return {
-      v: 1,
-      xp: typeof raw.xp === 'number' ? Math.max(0, raw.xp) : 0,
-      completed: (raw.completed && typeof raw.completed === 'object' && !Array.isArray(raw.completed)) ? raw.completed : {},
-      streak: {
-        count: (raw.streak && typeof raw.streak.count === 'number') ? Math.max(0, raw.streak.count) : 0,
-        lastDay: (raw.streak && typeof raw.streak.lastDay === 'string') ? raw.streak.lastDay : null,
-      },
-      createdAt: typeof raw.createdAt === 'string' ? raw.createdAt : getLocalDateString(),
-    };
+
+  const completed = {};
+  if (raw.completed && typeof raw.completed === 'object' && !Array.isArray(raw.completed)) {
+    for (const [id, rec] of Object.entries(raw.completed)) {
+      if (rec && typeof rec === 'object') {
+        completed[id] = {
+          at: typeof rec.at === 'string' ? rec.at : getLocalDateString(),
+          kind: rec.kind || 'exercise',
+          usedTips: typeof rec.usedTips === 'number' ? Math.max(0, rec.usedTips) : 0,
+        };
+      }
+    }
   }
-  return createDefaultState();
+
+  const belts = {};
+  if (raw.belts && typeof raw.belts === 'object' && !Array.isArray(raw.belts)) {
+    for (const [beltId, bRec] of Object.entries(raw.belts)) {
+      if (bRec && typeof bRec === 'object' && typeof bRec.earnedAt === 'string') {
+        belts[beltId] = { earnedAt: bRec.earnedAt };
+      }
+    }
+  }
+
+  return {
+    v: 2,
+    xp: typeof raw.xp === 'number' ? Math.max(0, raw.xp) : 0,
+    completed,
+    belts,
+    streak: {
+      count: (raw.streak && typeof raw.streak.count === 'number') ? Math.max(0, raw.streak.count) : 0,
+      lastDay: (raw.streak && typeof raw.streak.lastDay === 'string') ? raw.streak.lastDay : null,
+    },
+    createdAt: typeof raw.createdAt === 'string' ? raw.createdAt : getLocalDateString(),
+  };
 }
 
 export function validateImportData(data) {
   if (!data || typeof data !== 'object' || Array.isArray(data)) {
     throw new Error('Invalid format: root must be a JSON object.');
   }
-  if (typeof data.v !== 'number' || data.v < 1) {
+  if (typeof data.v !== 'number' || (data.v !== 1 && data.v !== 2)) {
     throw new Error('Invalid or missing schema version.');
   }
   if (typeof data.xp !== 'number' || data.xp < 0) {
@@ -79,6 +100,16 @@ export function validateImportData(data) {
     }
     if (typeof record.usedTips !== 'number' || record.usedTips < 0) {
       throw new Error(`Invalid tips count for ${id}.`);
+    }
+  }
+  if (data.belts !== undefined) {
+    if (!data.belts || typeof data.belts !== 'object' || Array.isArray(data.belts)) {
+      throw new Error('Invalid belts data.');
+    }
+    for (const [beltId, bRec] of Object.entries(data.belts)) {
+      if (!bRec || typeof bRec !== 'object' || typeof bRec.earnedAt !== 'string') {
+        throw new Error(`Invalid belt record for ${beltId}.`);
+      }
     }
   }
   if (!data.streak || typeof data.streak !== 'object' || typeof data.streak.count !== 'number') {
@@ -211,11 +242,88 @@ export class ProgressStore {
     this.state.xp += earnedXp;
     this.state.completed[exerciseId] = {
       at: todayStr,
+      kind: 'exercise',
       usedTips: Number(usedTips) || 0,
     };
 
     this.save();
     return { addedXp: earnedXp, firstCompletion: true };
+  }
+
+  completeQuiz(quizId, xp = CONFIG.XP.COMPLETE_QUIZ, todayStr = getLocalDateString()) {
+    if (!quizId) return { addedXp: 0, firstCompletion: false };
+    this.recordActivity(todayStr);
+    if (this.state.completed[quizId]) {
+      return { addedXp: 0, firstCompletion: false };
+    }
+    const earnedXp = Math.max(0, Number(xp) || CONFIG.XP.COMPLETE_QUIZ);
+    this.state.xp += earnedXp;
+    this.state.completed[quizId] = {
+      at: todayStr,
+      kind: 'quiz',
+      usedTips: 0,
+    };
+    this.save();
+    return { addedXp: earnedXp, firstCompletion: true };
+  }
+
+  completeOrder(orderId, usedTips = 0, xp = 10, todayStr = getLocalDateString()) {
+    if (!orderId) return { addedXp: 0, firstCompletion: false };
+    this.recordActivity(todayStr);
+    if (this.state.completed[orderId]) {
+      return { addedXp: 0, firstCompletion: false };
+    }
+    let earnedXp = Number(xp) || 10;
+    if (usedTips === 0) {
+      earnedXp += CONFIG.XP.HINT_FREE_BONUS;
+    }
+    this.state.xp += earnedXp;
+    this.state.completed[orderId] = {
+      at: todayStr,
+      kind: 'order',
+      usedTips: Number(usedTips) || 0,
+    };
+    this.save();
+    return { addedXp: earnedXp, firstCompletion: true };
+  }
+
+  completeGradingTask(taskId, todayStr = getLocalDateString()) {
+    if (!taskId) return { addedXp: 0, firstCompletion: false };
+    this.recordActivity(todayStr);
+    const firstTime = !this.state.completed[taskId];
+    this.state.completed[taskId] = {
+      at: todayStr,
+      kind: 'grading-task',
+      usedTips: 0,
+    };
+    this.save();
+    return { addedXp: 0, firstCompletion: firstTime };
+  }
+
+  claimBelt(beltId, todayStr = getLocalDateString()) {
+    if (!beltId) return { success: false, addedXp: 0 };
+    if (!this.state.belts) this.state.belts = {};
+    if (this.state.belts[beltId]) {
+      return { success: false, addedXp: 0, alreadyClaimed: true };
+    }
+    this.state.belts[beltId] = { earnedAt: todayStr };
+    const addedXp = CONFIG.XP.CLAIM_BELT;
+    this.state.xp += addedXp;
+    this.save();
+    return { success: true, addedXp, alreadyClaimed: false };
+  }
+
+  isBeltClaimed(beltId) {
+    return Boolean(this.state.belts && this.state.belts[beltId]);
+  }
+
+  getCurrentBelt() {
+    for (const belt of CONFIG.BELTS) {
+      if (!this.isBeltClaimed(belt.id)) {
+        return belt;
+      }
+    }
+    return CONFIG.BELTS[CONFIG.BELTS.length - 1];
   }
 
   isCompleted(exerciseId) {

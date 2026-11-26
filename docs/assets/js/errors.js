@@ -35,6 +35,17 @@ export function translate(rawError) {
     };
   }
 
+  // input() unsupported error
+  if (/input\(\) is not supported|INPUT_NOT_SUPPORTED/i.test(raw)) {
+    return {
+      title: 'Asking Questions with input()',
+      explain: "This dojo can't ask you questions with `input()` yet.",
+      tryThis: 'Try setting a variable instead, like `name = "Asha"`.',
+      line,
+      raw,
+    };
+  }
+
   // Unterminated string / EOF error
   if (/unterminated string literal|EOL while scanning string literal|unexpected EOF while parsing/i.test(raw)) {
     return {

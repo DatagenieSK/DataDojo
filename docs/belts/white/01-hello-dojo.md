@@ -8,6 +8,7 @@ goal: Print a greeting to the screen and learn how to run Python code.
 # Kata 01: Your First Line of Python 🥋
 
 ## 🎯 Why This Matters
+In DataDojo, each bite-sized lesson is a <abbr class="dojo-term" data-term="kata">kata</abbr>.
 Computers cannot read our minds, so we use code to tell them exactly what to say and do.
 
 ---
@@ -51,7 +52,8 @@ print("3... 2... 1... Go!")
 ---
 
 ## 💥 Break It On Purpose!
-Mistakes are how every great coder learns. Let's see what happens when we make a typo on purpose.
+Mistakes are how every great coder learns.
+The rules for how code must be written are called <abbr class="dojo-term" data-term="syntax">syntax</abbr>. Let's see what happens when we make a typo on purpose.
 
 Look at the code below. We removed the closing quotation mark at the end of `"Hello`:
 
@@ -69,7 +71,7 @@ Fix the quotes and press Run again to see it succeed.
 ---
 
 ## 🥊 Sparring Exercise
-Now it is your turn to spar! Make Python greet you by name.
+Now it is your turn to try a <abbr class="dojo-term" data-term="sparring">sparring</abbr> exercise! Make Python greet you by name.
 
 Replace the `___` with your name inside quotes (for example `"Asha"` or `"Alex"`), then click **Check**.
 

@@ -8,9 +8,10 @@ test('first run initializes clean default state', () => {
   const store = new ProgressStore(adapter);
   const state = store.getState();
 
-  assert.equal(state.v, 1);
+  assert.equal(state.v, 2);
   assert.equal(state.xp, 0);
   assert.deepEqual(state.completed, {});
+  assert.deepEqual(state.belts, {});
   assert.equal(state.streak.count, 0);
   assert.equal(state.streak.lastDay, null);
 });
@@ -91,7 +92,7 @@ test('handles corrupted JSON in storage gracefully', () => {
   adapter.setItem(CONFIG.STORAGE_KEY, '{ invalid json: bad');
 
   const store = new ProgressStore(adapter);
-  assert.equal(store.getState().v, 1);
+  assert.equal(store.getState().v, 2);
   assert.equal(store.getState().xp, 0);
 });
 
@@ -114,18 +115,88 @@ test('handles unavailable storage with fallback and callback notice', () => {
   assert.equal(noticeTriggered, true);
 });
 
-test('schema migration handles legacy or missing keys safely', () => {
+test('schema migration handles legacy v1 data to v2 safely', () => {
   const adapter = new MemoryStorageAdapter();
   adapter.setItem(CONFIG.STORAGE_KEY, JSON.stringify({
     v: 1,
     xp: 50,
     completed: { 'white-01-hello': { at: '2026-11-27', usedTips: 1 } },
-    // missing streak
+    streak: { count: 3, lastDay: '2026-11-26' },
+    createdAt: '2026-11-20',
   }));
 
   const store = new ProgressStore(adapter);
+  const state = store.getState();
+  assert.equal(state.v, 2);
+  assert.equal(state.xp, 50);
+  assert.equal(state.streak.count, 3);
+  assert.equal(state.completed['white-01-hello'].kind, 'exercise');
+  assert.deepEqual(state.belts, {});
+});
+
+test('claiming a belt awards 50 XP once and prevents duplicate XP', () => {
+  const adapter = new MemoryStorageAdapter();
+  const store = new ProgressStore(adapter);
+
+  const claim1 = store.claimBelt('white', '2026-11-27');
+  assert.equal(claim1.success, true);
+  assert.equal(claim1.addedXp, 50);
   assert.equal(store.getState().xp, 50);
-  assert.equal(store.getState().streak.count, 0);
+  assert.equal(store.isBeltClaimed('white'), true);
+
+  // Claiming again awards 0 XP
+  const claim2 = store.claimBelt('white', '2026-11-27');
+  assert.equal(claim2.success, false);
+  assert.equal(claim2.alreadyClaimed, true);
+  assert.equal(claim2.addedXp, 0);
+  assert.equal(store.getState().xp, 50);
+});
+
+test('completing a quiz awards XP once', () => {
+  const adapter = new MemoryStorageAdapter();
+  const store = new ProgressStore(adapter);
+
+  const q1 = store.completeQuiz('white-03-quiz', 5, '2026-11-27');
+  assert.equal(q1.firstCompletion, true);
+  assert.equal(q1.addedXp, 5);
+  assert.equal(store.getState().xp, 5);
+
+  const q2 = store.completeQuiz('white-03-quiz', 5, '2026-11-27');
+  assert.equal(q2.firstCompletion, false);
+  assert.equal(q2.addedXp, 0);
+  assert.equal(store.getState().xp, 5);
+});
+
+test('completing an order problem awards XP once with hint bonus', () => {
+  const adapter = new MemoryStorageAdapter();
+  const store = new ProgressStore(adapter);
+
+  const o1 = store.completeOrder('white-05-order', 0, 10, '2026-11-27');
+  assert.equal(o1.firstCompletion, true);
+  assert.equal(o1.addedXp, 15); // 10 base + 5 bonus
+  assert.equal(store.getState().xp, 15);
+
+  const o2 = store.completeOrder('white-05-order', 0, 10, '2026-11-27');
+  assert.equal(o2.firstCompletion, false);
+  assert.equal(o2.addedXp, 0);
+});
+
+test('import validation of bad belts data', () => {
+  assert.throws(() => validateImportData({
+    v: 2,
+    xp: 0,
+    completed: {},
+    belts: 'not an object',
+    streak: { count: 0, lastDay: null },
+  }));
+
+  assert.throws(() => validateImportData({
+    v: 2,
+    xp: 0,
+    completed: {},
+    belts: { white: { earnedAt: 12345 } }, // bad earnedAt type
+    streak: { count: 0, lastDay: null },
+  }));
 });
 
 test('import validation accepts valid data and rejects invalid schemas', () => {

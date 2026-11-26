@@ -99,7 +99,7 @@ export function initCell(container, options = {}) {
           <button type="button" class="dojo-btn dojo-btn-reset" aria-label="Reset Code">
             ↺ Reset
           </button>
-          ${isExercise ? `
+          ${isExercise && !container.dataset.covers ? `
             <button type="button" class="dojo-btn dojo-btn-tip" aria-label="Get Sensei Tip">
               🥋 Sensei Tip (${tips.length} left)
             </button>
@@ -111,7 +111,7 @@ export function initCell(container, options = {}) {
         </div>
       </div>
 
-      ${isExercise ? `<div class="dojo-tips-ladder" aria-live="polite"></div>` : ''}
+      ${isExercise && !container.dataset.covers ? `<div class="dojo-tips-ladder" aria-live="polite"></div>` : ''}
 
       <div class="dojo-cell-output" aria-live="polite" aria-atomic="true">
         <div class="dojo-output-status" style="display: none;"></div>
