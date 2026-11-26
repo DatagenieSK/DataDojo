@@ -67,6 +67,9 @@ We welcome community katas! Please see [CONTRIBUTING.md](CONTRIBUTING.md) and th
 
 ---
 
-## 📄 License
+## 📄 License & Conduct
 - **Code**: MIT License (see [LICENSE](LICENSE))
 - **Curriculum & Content**: CC BY-SA 4.0 (see [LICENSE-CONTENT](LICENSE-CONTENT))
+- **Community**: Contributor Covenant (see [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md))
+
+> **TODO**: The repository maintainer will paste the official legal text into `LICENSE`, `LICENSE-CONTENT`, and `CODE_OF_CONDUCT.md`.
