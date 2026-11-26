@@ -14,14 +14,22 @@ function showStorageNotice() {
   if (storageNoticeShown) return;
   storageNoticeShown = true;
 
-  const mainContent = document.querySelector('.md-content') || document.body;
-  const notice = document.createElement('div');
-  notice.className = 'dojo-storage-notice';
-  notice.setAttribute('role', 'status');
-  notice.innerHTML = `
-    <span>🥋 <strong>Dojo Notice:</strong> Storage is unavailable in this browser mode. You can still practice all katas, but your progress will not be saved between visits.</span>
-  `;
-  mainContent.insertBefore(notice, mainContent.firstChild);
+  const insert = () => {
+    const mainContent = document.querySelector('.md-content') || document.body;
+    if (!mainContent) {
+      setTimeout(insert, 50);
+      return;
+    }
+    if (document.querySelector('.dojo-storage-notice')) return;
+    const notice = document.createElement('div');
+    notice.className = 'dojo-storage-notice';
+    notice.setAttribute('role', 'status');
+    notice.innerHTML = `
+      <span>🥋 <strong>Dojo Notice:</strong> Storage is unavailable in this browser mode. You can still practice all katas, but your progress will not be saved between visits.</span>
+    `;
+    mainContent.insertBefore(notice, mainContent.firstChild);
+  };
+  insert();
 }
 
 function initGlossary() {

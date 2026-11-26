@@ -101,6 +101,19 @@ a:focus-visible,
   to   { opacity: 1; transform: translateY(0); }
 }
 
+.dojo-badge-completed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--dojo-success-bg);
+  color: var(--dojo-success);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid var(--dojo-success);
+}
+
 .dojo-belt-badge {
   position: relative;
   padding: 0.2rem 0.65rem 0.2rem 0.5rem;

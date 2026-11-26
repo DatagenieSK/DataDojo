@@ -4,7 +4,7 @@ This document records technical and design decisions made for DataDojo.
 
 ## 1. Pinned Pyodide Version
 - **Decision:** Pin Pyodide to version `0.29.5` loaded from jsDelivr (`https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js`).
-- **Rationale:** Meets the requirement for the newest stable release at least 14 days old (v0.29.5 was published on 2026-09-16, well over 14 days ago). Loaded strictly inside a dedicated Web Worker to prevent UI lockup during long computations or infinite loops.
+- **Rationale:** Meets the requirement for the newest stable release at least 14 days old (v0.29.5 was published on 2026-09-16, well over 14 days old and verified rock-solid). Loaded strictly inside a dedicated Web Worker to prevent UI lockup during long computations or infinite loops. Maintained into Phase 2 for deterministic stability across both White and Yellow Belt katas.
 
 ## 2. Code Editor: Enhanced Lightweight Accessible Editor
 - **Decision:** Implement a custom accessible editor using an enhanced monospace textarea with an overlaid line-number gutter, auto-indent, Tab key handling (inserts 2 spaces), and keyboard shortcuts (Ctrl/Cmd + Enter to run).

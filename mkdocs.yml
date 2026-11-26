@@ -1,6 +1,7 @@
 site_name: DataDojo
 site_description: Short, playful Python and data analysis lessons for total beginners.
 site_author: DataDojo Contributors
+site_url: https://datageniesk.github.io/DataDojo/
 repo_url: https://github.com/DatagenieSK/DataDojo
 repo_name: DatagenieSK/DataDojo
 

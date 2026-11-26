@@ -26,6 +26,12 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
       - name: Run JavaScript unit tests
         run: node --test
 
@@ -34,3 +40,6 @@ jobs:
 
       - name: Build MkDocs site (strict)
         run: mkdocs build --strict
+
+      - name: Run Playwright Browser Tests
+        run: npx playwright test

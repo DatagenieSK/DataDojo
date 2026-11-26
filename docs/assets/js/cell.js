@@ -106,6 +106,7 @@ export function initCell(container, options = {}) {
           ` : ''}
         </div>
         <div class="dojo-toolbar-right">
+          ${isExercise ? `<span class="dojo-badge-completed" style="display: ${progressStore && progressStore.isCompleted(exerciseId) ? 'inline-flex' : 'none'};">✅ Completed</span>` : ''}
           <span class="dojo-shortcut-hint">Ctrl + Enter to run</span>
         </div>
       </div>
@@ -133,6 +134,17 @@ export function initCell(container, options = {}) {
   const evalEl = container.querySelector('.dojo-output-eval');
 
   setupEditor(textarea, gutter);
+
+  // If already completed in progress store, mark visually
+  if (isExercise && progressStore && progressStore.isCompleted(exerciseId)) {
+    const headerTitle = container.querySelector('.dojo-cell-title');
+    if (headerTitle && !container.querySelector('.dojo-badge-completed')) {
+      const badge = document.createElement('span');
+      badge.className = 'dojo-badge-completed';
+      badge.textContent = '✅ Completed';
+      headerTitle.appendChild(badge);
+    }
+  }
 
   // Lazy wake up on focus
   textarea.addEventListener('focus', () => {
@@ -209,6 +221,8 @@ export function initCell(container, options = {}) {
     if (isCheckMode && res.passed) {
       statusEl.style.display = 'block';
       statusEl.className = 'dojo-output-status dojo-status-success';
+      const badge = container.querySelector('.dojo-badge-completed');
+      if (badge) badge.style.display = 'inline-flex';
       statusEl.innerHTML = `
         <div class="dojo-feedback-card dojo-feedback-success">
           <strong>🥋 Kata Passed!</strong>

@@ -110,19 +110,29 @@ export class ProgressStore {
     this.state = null;
 
     if (!this.storage) {
-      if (typeof window !== 'undefined' && window.localStorage) {
+      let isAvailable = false;
+      if (typeof window !== 'undefined') {
         try {
           const testKey = '__storage_test__';
           window.localStorage.setItem(testKey, '1');
           window.localStorage.removeItem(testKey);
           this.storage = window.localStorage;
+          isAvailable = true;
         } catch {
-          this.storageAvailable = false;
-          this.storage = new MemoryStorageAdapter();
-          if (this.onStorageUnavailable) this.onStorageUnavailable();
+          // localStorage disabled / blocked (e.g. private mode or strict privacy)
         }
-      } else {
+      }
+
+      if (!isAvailable) {
+        this.storageAvailable = false;
         this.storage = new MemoryStorageAdapter();
+        if (this.onStorageUnavailable) {
+          try {
+            this.onStorageUnavailable();
+          } catch (e) {
+            console.warn('onStorageUnavailable callback error', e);
+          }
+        }
       }
     }
 

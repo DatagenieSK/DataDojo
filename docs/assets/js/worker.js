@@ -24,7 +24,7 @@ async function initPyodide() {
 
     // Fetch single shared helper file published by MkDocs
     try {
-      const helpersUrl = new URL('../py/dojo_helpers.py', import.meta.url);
+      const helpersUrl = new URL('../py/dojo_helpers.py', self.location.href);
       const res = await fetch(helpersUrl);
       if (res.ok) {
         const helperCode = await res.text();
