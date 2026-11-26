@@ -13,12 +13,11 @@ const PYODIDE_VERSION = '0.29.5';
 const CDN_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.js`;
 
 async function initPyodide() {
-  if (pyodide) return pyodide;
   if (pyodideReadyPromise) return pyodideReadyPromise;
 
   pyodideReadyPromise = (async () => {
     importScripts(CDN_URL);
-    pyodide = await loadPyodide({
+    const instance = await loadPyodide({
       indexURL: `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`,
     });
 
@@ -28,14 +27,14 @@ async function initPyodide() {
       const res = await fetch(helpersUrl);
       if (res.ok) {
         const helperCode = await res.text();
-        pyodide.FS.writeFile('dojo_helpers.py', helperCode);
+        instance.FS.writeFile('dojo_helpers.py', helperCode);
       }
     } catch (e) {
       console.warn('Could not fetch external dojo_helpers.py, falling back to built-in definitions', e);
     }
 
     // Initialize custom test execution engine in Python
-    await pyodide.runPythonAsync(`
+    await instance.runPythonAsync(`
 import sys
 import io
 import ast
@@ -156,6 +155,7 @@ class DojoRunner:
 _dojo_runner = DojoRunner()
 `);
 
+    pyodide = instance;
     return pyodide;
   })();
 

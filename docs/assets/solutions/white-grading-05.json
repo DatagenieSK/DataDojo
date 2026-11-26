@@ -1,0 +1,4 @@
+{
+  "id": "white-grading-05",
+  "solution": "def belt_level(points):\n    if points >= 100:\n        return \"Yellow\"\n    else:\n        return \"White\"\n\nprint(belt_level(120))"
+}

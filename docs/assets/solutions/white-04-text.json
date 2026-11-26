@@ -1,0 +1,4 @@
+{
+  "id": "white-04-text",
+  "solution": "first_name = \"Maya\"\nbelt_color = \"white\"\ngreeting = f\"Welcome {first_name}, your belt is {belt_color.upper()}!\"\nprint(greeting)"
+}

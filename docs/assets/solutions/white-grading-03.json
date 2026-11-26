@@ -1,0 +1,4 @@
+{
+  "id": "white-grading-03",
+  "solution": "stars = 7\nif stars >= 5:\n    print(\"Welcome to Tournament\")\nelse:\n    print(\"Keep training\")"
+}

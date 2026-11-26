@@ -1,0 +1,4 @@
+{
+  "id": "white-grading-01",
+  "solution": "sword_price = 75\nquantity = 4\ndiscount = 20\ntotal_cost = (sword_price * quantity) - discount\nprint(\"Total cost:\", total_cost)"
+}

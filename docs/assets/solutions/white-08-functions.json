@@ -1,0 +1,4 @@
+{
+  "id": "white-08-functions",
+  "solution": "def calculate_xp(katas, sparring):\n    return (katas * 10) + (sparring * 15)\n\nprint(calculate_xp(3, 2))"
+}

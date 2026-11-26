@@ -1,0 +1,4 @@
+{
+  "id": "white-grading-04",
+  "solution": "roster = [\"Asha\", \"Ravi\", \"Maya\"]\nroster.append(\"Kenji\")\nprint(len(roster))"
+}

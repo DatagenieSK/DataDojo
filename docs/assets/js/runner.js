@@ -105,16 +105,34 @@ class DojoRunnerSupervisor {
     const id = `req_${++this.requestIdCounter}_${Date.now()}`;
 
     return new Promise((resolve) => {
-      const timer = setTimeout(() => {
-        this.pendingRequests.delete(id);
-        this._terminateAndRestart();
-        resolve({
-          success: false,
-          rawError: 'Error: Execution timed out after ' + timeoutMs + 'ms',
-        });
-      }, timeoutMs);
+      let timer = null;
 
-      this.pendingRequests.set(id, { resolve, timer });
+      const startTimer = () => {
+        timer = setTimeout(() => {
+          this.pendingRequests.delete(id);
+          this._terminateAndRestart();
+          resolve({
+            success: false,
+            rawError: 'Error: Execution timed out after ' + timeoutMs + 'ms',
+          });
+        }, timeoutMs);
+      };
+
+      if (this.isReady) {
+        startTimer();
+      } else {
+        const unregister = this.onWakeUp((status) => {
+          if (status === 'ready') {
+            unregister();
+            startTimer();
+          }
+        });
+      }
+
+      this.pendingRequests.set(id, {
+        resolve,
+        get timer() { return timer; },
+      });
       this.worker.postMessage({ ...payload, id });
     });
   }

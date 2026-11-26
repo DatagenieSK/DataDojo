@@ -1208,11 +1208,9 @@ a:focus-visible,
 
 @keyframes pulseClaim {
   0%, 100% {
-    transform: scale(1);
     box-shadow: 0 4px 16px var(--dojo-accent-glow);
   }
   50% {
-    transform: scale(1.02);
     box-shadow: 0 6px 24px var(--dojo-accent-glow);
   }
 }

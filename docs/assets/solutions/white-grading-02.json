@@ -1,0 +1,4 @@
+{
+  "id": "white-grading-02",
+  "solution": "title = \"ninja\"\nstudent = \"Maya\"\nbadge = f\"{title.upper()}: {student}\"\nprint(badge)"
+}

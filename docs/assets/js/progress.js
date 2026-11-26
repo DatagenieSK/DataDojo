@@ -180,6 +180,9 @@ export class ProgressStore {
       }
       const parsed = JSON.parse(raw);
       this.state = migrateState(parsed);
+      if (parsed.v !== 2) {
+        this.save();
+      }
     } catch {
       this.state = createDefaultState();
       this.save();

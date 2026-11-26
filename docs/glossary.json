@@ -4,5 +4,16 @@
   "cell": "A small block on the page where you can write and run a piece of code.",
   "syntax": "The spelling, punctuation, and grammar rules of a programming language.",
   "kata": "A short, focused exercise practiced repeatedly to build skill and muscle memory.",
-  "sparring": "An interactive exercise where you write code to solve a problem and test your technique."
+  "sparring": "An interactive exercise where you write code to solve a problem and test your technique.",
+  "operator": "A symbol like +, -, or * that tells Python to perform a calculation.",
+  "integer": "A whole number without any decimal point, such as 42 or -7.",
+  "float": "A number that contains a decimal point, such as 3.14 or 0.5.",
+  "string": "A sequence of letters, numbers, or symbols enclosed in quotes, representing text.",
+  "condition": "An expression that evaluates to either True or False to guide decisions.",
+  "list": "An ordered collection of values held inside square brackets [].",
+  "index": "The number representing the position of an item in a list, starting at 0.",
+  "loop": "A programming construct that repeats a block of code multiple times.",
+  "function": "A named, reusable block of code that performs a specific action.",
+  "parameter": "A variable listed in a function definition that receives input values when called.",
+  "return value": "The result value that a function gives back to the caller using the return keyword."
 }

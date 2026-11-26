@@ -81,7 +81,7 @@ test.describe('Part B: Engine Features & Schema v2', () => {
       await firstUp.click();
     }
 
-    await expect(order.locator('.dojo-order-item')).toHaveCount(3);
+    await expect(order.locator('.dojo-order-item')).toHaveCount(6);
   });
 
   test('4. Grading unlocks Claim your belt at pass target and awards 50 XP once', async ({ page }) => {

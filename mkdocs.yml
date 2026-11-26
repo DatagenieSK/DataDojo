@@ -65,6 +65,13 @@ nav:
           - Overview: belts/white/index.md
           - "01. Hello Dojo": belts/white/01-hello-dojo.md
           - "02. Variables": belts/white/02-variables.md
+          - "03. Numbers and Math": belts/white/03-numbers.md
+          - "04. Working with Text": belts/white/04-text.md
+          - "05. Decisions": belts/white/05-decisions.md
+          - "06. Lists": belts/white/06-lists.md
+          - "07. Loops": belts/white/07-loops.md
+          - "08. Functions": belts/white/08-functions.md
+          - "Grading": belts/white/grading.md
   - Contribute:
       - Writing a Kata: contribute/writing-a-kata.md
   - Architecture Decisions: DECISIONS.md

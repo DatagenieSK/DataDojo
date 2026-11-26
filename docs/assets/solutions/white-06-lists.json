@@ -1,0 +1,4 @@
+{
+  "id": "white-06-lists",
+  "solution": "belt_colors = [\"white\", \"yellow\", \"orange\"]\nbelt_colors.append(\"green\")\nprint(belt_colors[0])\nprint(len(belt_colors))"
+}

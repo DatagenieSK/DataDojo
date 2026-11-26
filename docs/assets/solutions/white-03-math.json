@@ -1,0 +1,4 @@
+{
+  "id": "white-03-math",
+  "solution": "noodle_price = 40\nbowls = 3\ndelivery_fee = 15\ntotal = (noodle_price * bowls) + delivery_fee\nprint(\"Total rupees:\", total)"
+}
