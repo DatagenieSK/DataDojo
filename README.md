@@ -1,5 +1,8 @@
 # DataDojo 🥋
 
+> 🌐 **Live Website:** [https://datageniesk.github.io/DataDojo/](https://datageniesk.github.io/DataDojo/)  
+> Start learning Python right now in your browser — zero setup, 100% free!
+
 DataDojo is an open-source interactive website that teaches total beginners Python and data analysis through short, playful lessons called **Katas**.
 
 Everything runs directly in your web browser using WebAssembly (Pyodide). There is no setup, no installation, and no database.
