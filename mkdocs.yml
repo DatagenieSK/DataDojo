@@ -1,0 +1,63 @@
+site_name: DataDojo
+site_description: Short, playful Python and data analysis lessons for total beginners.
+site_author: DataDojo Contributors
+repo_url: https://github.com/DatagenieSK/DataDojo
+repo_name: DatagenieSK/DataDojo
+
+theme:
+  name: material
+  custom_dir: overrides
+  font: false
+  palette:
+    # Light mode (Warm Dojo)
+    - scheme: default
+      primary: white
+      accent: red
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    # Dark mode (Ink Dojo)
+    - scheme: slate
+      primary: grey
+      accent: red
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.indexes
+    - content.code.copy
+
+extra_css:
+  - assets/css/dojo.css
+
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: dojo-run
+          class: dojo-run
+          format: !!python/name:tools.dojo_markdown.fence_dojo_run
+        - name: dojo-exercise
+          class: dojo-exercise
+          format: !!python/name:tools.dojo_markdown.fence_dojo_exercise
+
+nav:
+  - Home: index.md
+  - Belts:
+      - White Belt:
+          - Overview: belts/white/index.md
+          - "01. Hello Dojo": belts/white/01-hello-dojo.md
+          - "02. Variables": belts/white/02-variables.md
+  - Contribute:
+      - Writing a Kata: contribute/writing-a-kata.md
+  - Architecture Decisions: DECISIONS.md

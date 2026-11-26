@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+  {{ super() }}
+  <script type="module" src="{{ 'assets/js/main.js' | url }}"></script>
+{% endblock %}

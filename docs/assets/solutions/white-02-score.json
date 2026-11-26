@@ -1,0 +1,4 @@
+{
+  "id": "white-02-score",
+  "solution": "score = 100\nprint(score)"
+}

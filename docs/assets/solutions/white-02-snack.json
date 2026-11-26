@@ -1,0 +1,4 @@
+{
+  "id": "white-02-snack",
+  "solution": "snack = \"Samosa\"\nprint(\"Snack:\", snack)"
+}
