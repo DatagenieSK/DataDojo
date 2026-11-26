@@ -9,7 +9,7 @@ let pyodide = null;
 let userNamespace = null;
 let pyodideReadyPromise = null;
 
-const PYODIDE_VERSION = '0.26.4';
+const PYODIDE_VERSION = '0.29.5';
 const CDN_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.js`;
 
 async function initPyodide() {
@@ -22,14 +22,47 @@ async function initPyodide() {
       indexURL: `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`,
     });
 
+    // Fetch single shared helper file published by MkDocs
+    try {
+      const helpersUrl = new URL('../py/dojo_helpers.py', import.meta.url);
+      const res = await fetch(helpersUrl);
+      if (res.ok) {
+        const helperCode = await res.text();
+        pyodide.FS.writeFile('dojo_helpers.py', helperCode);
+      }
+    } catch (e) {
+      console.warn('Could not fetch external dojo_helpers.py, falling back to built-in definitions', e);
+    }
+
     // Initialize custom test execution engine in Python
     await pyodide.runPythonAsync(`
 import sys
 import io
 import ast
 
-class TestFailure(Exception):
-    pass
+try:
+    from dojo_helpers import DojoTestContext, TestFailure
+except ImportError:
+    class TestFailure(Exception):
+        pass
+
+    class DojoTestContext:
+        def __init__(self, stdout_text="", globals_dict=None):
+            self.stdout = stdout_text or ""
+            self.globals = globals_dict or {}
+        def check(self, condition, message="Test condition failed."):
+            if not condition:
+                raise TestFailure(str(message))
+        def stdout_contains(self, text):
+            return str(text) in self.stdout
+        def stdout_equals(self, text):
+            return self.stdout.strip() == str(text).strip()
+        def var(self, name):
+            return self.globals.get(name, None)
+        def has_var(self, name):
+            return name in self.globals
+        def calls(self, func_name, *args):
+            return self.globals.get("__recorded_calls__", {}).get(func_name, []) == list(args)
 
 class DojoRunner:
     def __init__(self):
@@ -90,35 +123,15 @@ class DojoRunner:
         # 1. Run user code
         stdout, stderr, last_val = self._exec_code(user_code)
 
-        # 2. Setup test context helpers
+        # 2. Setup test context helpers from shared dojo_helpers
+        ctx = DojoTestContext(stdout, self.namespace)
         test_env = dict(self.namespace)
-        
-        def check(condition, message="Test condition failed."):
-            if not condition:
-                raise TestFailure(str(message))
-
-        def stdout_contains(text):
-            return str(text) in stdout
-
-        def stdout_equals(text):
-            return stdout.strip() == str(text).strip()
-
-        def var(name):
-            return self.namespace.get(name, None)
-
-        def has_var(name):
-            return name in self.namespace
-
-        def calls(func_name, *args):
-            recorded = self.namespace.get("__recorded_calls__", {})
-            return recorded.get(func_name, []) == list(args)
-
-        test_env['check'] = check
-        test_env['stdout_contains'] = stdout_contains
-        test_env['stdout_equals'] = stdout_equals
-        test_env['var'] = var
-        test_env['has_var'] = has_var
-        test_env['calls'] = calls
+        test_env['check'] = ctx.check
+        test_env['stdout_contains'] = ctx.stdout_contains
+        test_env['stdout_equals'] = ctx.stdout_equals
+        test_env['var'] = ctx.var
+        test_env['has_var'] = ctx.has_var
+        test_env['calls'] = ctx.calls
         test_env['TestFailure'] = TestFailure
 
         # 3. Execute tests

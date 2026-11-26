@@ -2,8 +2,8 @@
  * DataDojo Engine Configuration Constants
  */
 export const CONFIG = {
-  PYODIDE_VERSION: '0.26.4',
-  PYODIDE_CDN_BASE: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/',
+  PYODIDE_VERSION: '0.29.5',
+  PYODIDE_CDN_BASE: 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/',
   EXECUTION_TIMEOUT_MS: 10000,
   STORAGE_KEY: 'datadojo:v1',
   XP: {

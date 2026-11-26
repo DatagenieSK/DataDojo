@@ -17,7 +17,15 @@ WORKSPACE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if WORKSPACE_ROOT not in sys.path:
     sys.path.insert(0, WORKSPACE_ROOT)
 
-from tools.dojo_helpers import DojoTestContext, TestFailure
+# Import shared helpers directly from docs/assets/py/dojo_helpers.py
+HELPERS_PATH = os.path.join(WORKSPACE_ROOT, "docs", "assets", "py", "dojo_helpers.py")
+import importlib.util
+spec = importlib.util.spec_from_file_location("dojo_helpers_canonical", HELPERS_PATH)
+dojo_helpers_canonical = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(dojo_helpers_canonical)
+
+DojoTestContext = dojo_helpers_canonical.DojoTestContext
+TestFailure = dojo_helpers_canonical.TestFailure
 
 VALID_BELTS = {"white", "yellow", "orange", "green", "blue", "purple", "brown", "black"}
 
